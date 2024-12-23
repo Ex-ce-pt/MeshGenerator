@@ -133,6 +133,46 @@ def generate_mesh(polygon_centers: list[Point], polygon_radius: float, number_of
         save_polygon_elements(graph, polygons, polygon)
 
     # Stage 3: Compute primary segments
+    for rectangle_vertex_idx in range(4):
+        for point_idx in range(4, len(graph.points)):
+            if segment_intersects_any(graph.points, graph.connections, rectangle_vertex_idx, point_idx):
+                continue
+
+            graph.connections[rectangle_vertex_idx].add(point_idx)
+            graph.connections[point_idx].add(rectangle_vertex_idx)
+
+    # Stage 4: Compute secondary segments
+    def complete_triangle() -> bool:
+        connections_of_polygon_vertices = [
+            (0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (0, 3), (3, 0),
+            *((poly[v1_idx], poly[v2_idx]) for poly in polygons for v1_idx in range(len(poly)) for v2_idx in
+              range(len(poly)) if
+              v1_idx != v2_idx and (v1_idx + 1) % len(poly) != v2_idx and v1_idx != (v2_idx + 1) % len(poly))
+        ]
+        # FrEaKy generator expression instead lol
+        # for poly in polygons:
+        #     for v1_idx in range(len(poly)):
+        #         for v2_idx in range(len(poly)):
+        #             if v1_idx != v2_idx and (v1_idx + 1) % len(poly) != v2_idx and v1_idx != (v2_idx + 1) % len(poly):
+        #                 connections_of_polygon_vertices.append((poly[v1_idx], poly[v2_idx]))
+        for a_idx in range(len(graph.points)):
+            for b_idx in graph.connections[a_idx]:
+                # Look for a 3rd point to complete the triangle
+                potential_c_idxs = graph.connections[a_idx].difference(graph.connections[b_idx]).difference({b_idx})
+                for c_idx in potential_c_idxs:
+                    if (b_idx, c_idx) in connections_of_polygon_vertices:
+                        continue
+                    if segment_intersects_any(graph.points, graph.connections, a_idx, c_idx) or segment_intersects_any(
+                            graph.points, graph.connections, b_idx, c_idx):
+                        continue
+                    graph.connections[b_idx].add(c_idx)
+                    graph.connections[c_idx].add(b_idx)
+                    return False
+        return True
+    while not complete_triangle():
+        pass
+
+    return graph
 
 if __name__ == '__main__':
     print("RUN MESH_GENERATOR.PY, YOU DUMBASS!!! FFS...")
