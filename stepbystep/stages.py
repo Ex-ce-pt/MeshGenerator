@@ -31,7 +31,7 @@ def input_polygon(polygon: list[gen.Point]):
         end_vertex_index = (begin_vertex_index + 1) % num_vertices
         end_vertex_id = first_vertex_id + end_vertex_index
 
-        # Initializes the sets, if the keys are not yet present
+        # Initialize the sets, if the keys are not yet present
         connections.setdefault(begin_vertex_id, set())
         connections.setdefault(end_vertex_id, set())
 
