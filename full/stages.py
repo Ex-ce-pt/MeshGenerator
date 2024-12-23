@@ -1,4 +1,5 @@
 """Defines stages for the current configuration."""
+import turtle
 
 import full.gen as gen
 import ui
@@ -16,7 +17,7 @@ POLYGON_CENTERS: list[gen.Point] = [
 NUMBER_OF_VERTICES: int = 10
 ####################################
 
-graph = None
+graph: gen.Graph | None = None
 
 def time_compute_mesh():
     global graph
@@ -28,7 +29,20 @@ def time_compute_mesh():
     print("Calculated the mesh, elapsed", (time.time_ns() - start_time), " ns")
 
 def draw_mesh():
-    pass
+    time_compute_mesh()
+
+    ui.turt.speed(8)
+    ui.turt.width(2)
+
+    for a_idx in range(len(graph.points)):
+        for b_idx in graph.connections[a_idx]:
+            if b_idx <= a_idx:
+                continue
+
+            ui.turt.penup()
+            ui.turt.setpos(ui.coords(graph.points[a_idx].x, graph.points[a_idx].y))
+            ui.turt.pendown()
+            ui.turt.setpos(ui.coords(graph.points[b_idx].x, graph.points[b_idx].y))
 
 STAGES = (
     ("", None),

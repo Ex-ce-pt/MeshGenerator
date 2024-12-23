@@ -8,7 +8,7 @@ import ui
 
 # 0 - Step-by-step
 # 1 - Full computation
-config = 0
+config = 1
 
 def main():
     match config:

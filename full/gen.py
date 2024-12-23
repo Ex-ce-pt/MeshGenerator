@@ -129,7 +129,7 @@ def generate_mesh(polygon_centers: list[Point], polygon_radius: float, number_of
     ])
 
     # Stage 2: Save polygon data
-    for polygon in compute_polygons():
+    for polygon in compute_polygons(polygon_centers, polygon_radius, number_of_vertices):
         save_polygon_elements(graph, polygons, polygon)
 
     # Stage 3: Compute primary segments
