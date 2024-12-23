@@ -1,6 +1,6 @@
 """Defines stages for the current configuration."""
 
-import gen
+import full.gen as gen
 import ui
 import time
 

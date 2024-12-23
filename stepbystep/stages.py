@@ -1,6 +1,6 @@
 """Defines stages for the current configuration."""
 
-import gen
+import stepbystep.gen as gen
 import ui
 
 # Graph

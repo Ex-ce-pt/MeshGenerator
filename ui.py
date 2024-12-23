@@ -42,7 +42,7 @@ def init_graphics(stages_list: list[tuple[str, any]]):
     global stage_text_variable
     global stages
 
-    stages = stage_list
+    stages = stages_list
 
     window = tk.Tk("Mesh Generator")
 
