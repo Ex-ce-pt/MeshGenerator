@@ -111,7 +111,6 @@ def segment_intersects_any(points: list[Point], connections: dict[int, set[int]]
                 return True
     return False
 
-
 def generate_mesh(polygon_centers: list[Point], polygon_radius: float, number_of_vertices: int) -> Graph:
     graph = Graph()
     polygons: list[list[int]] = []  # A helper list for Stage 4
