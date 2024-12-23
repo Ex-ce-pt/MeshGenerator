@@ -32,9 +32,9 @@ def compute_polygons() -> list[list[Point]]:
     polygons: list[list[Point]] = []
 
     for hole_center in HOLE_CENTERS:
-        polygon: list[Point] = [Point(hole_center.x + HOLE_RADIUS, hole_center.y)]
+        polygon: list[Point] = []
 
-        for vertex_index in range(1, NUMBER_OF_VERTICES):
+        for vertex_index in range(NUMBER_OF_VERTICES):
             angle = vertex_index * 2 * math.pi / NUMBER_OF_VERTICES
             new_vertex = Point(hole_center.x + HOLE_RADIUS * math.cos(angle), hole_center.y + HOLE_RADIUS * math.sin(angle))
             polygon.append(new_vertex)

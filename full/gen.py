@@ -52,9 +52,9 @@ def compute_polygons(polygon_centers: list[Point], polygon_radius: float, number
     polygons: list[list[Point]] = []
 
     for center in polygon_centers:
-        polygon: list[Point] = [Point(center.x + polygon_radius, center.y)]
+        polygon: list[Point] = []
 
-        for vertex_index in range(1, number_of_vertices):
+        for vertex_index in range(number_of_vertices):
             angle = vertex_index * 2 * math.pi / number_of_vertices
             new_vertex = Point(center.x + polygon_radius * math.cos(angle), center.y + polygon_radius * math.sin(angle))
             polygon.append(new_vertex)
