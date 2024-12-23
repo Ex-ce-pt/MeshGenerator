@@ -1,3 +1,4 @@
+"""Defines stages for the current configuration."""
 
 from stepbystep import actual_generator as gen
 import ui
@@ -61,7 +62,7 @@ def draw_rectangle():
 
 
 # Stage 2
-def draw_holes():
+def draw_polygons():
     ui.turt.width(2)
 
     for polygon in gen.compute_polygons():
@@ -124,3 +125,14 @@ def draw_secondary_segments():
 
     while not complete_triangle():
         pass
+
+STAGES = (
+    ("", None),
+    ("rectangle", draw_rectangle),
+    ("polygons", draw_polygons),
+    ("primary segments", draw_primary_segments),
+    ("secondary segments", draw_secondary_segments)
+)
+
+if __name__ == '__main__':
+    print("RUN MESH_GENERATOR.PY, YOU DUMBASS!!! FFS...")

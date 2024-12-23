@@ -1,18 +1,25 @@
 """Main file."""
 
-import stepbystep.stages
+import stepbystep
+from stepbystep import stages
 import ui
 
-STAGES = (
-    ("", None),
-    ("rectangle", stepbystep.stages.draw_rectangle),
-    ("holes", stepbystep.stages.draw_holes),
-    ("primary segments", stepbystep.stages.draw_primary_segments),
-    ("secondary segments", stepbystep.stages.draw_secondary_segments)
-)
+# 0 - Step-by-step
+# 1 - Full computation
+config = 0
 
 def main():
-    ui.init_graphics(STAGES)
+    match config:
+        case 0:
+            ui.init_graphics(stepbystep.stages.STAGES)
+
+        case 1:
+            pass
+
+        case _:
+            print("Unsupported configuration:", config)
+            exit(1)
+
     ui.window.mainloop()
 
 if __name__ == '__main__':
