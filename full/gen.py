@@ -63,53 +63,6 @@ def compute_polygons(polygon_centers: list[Point], polygon_radius: float, number
 
     return polygons
 
-def generate_mesh(polygon_centers: list[Point], polygon_radius: float, number_of_vertices: int) -> Graph:
-    graph = Graph()
-    polygons: list[list[int]] = []  # A helper list for Stage 4
-
-    # Stage 1: Save a rectangle as polygon data
-    save_polygon_elements(graph, polygons, [
-        Point(0, 0),
-        Point(0, 1),
-        Point(1, 1),
-        Point(1, 0)
-    ])
-
-    # Stage 2: Save polygon data
-    for polygon in compute_polygons():
-        save_polygon_elements(graph, polygons, polygon)
-
-    # Stage 3: Compute primary segments
-
-# Input parameters
-
-HOLE_RADIUS: float = 0.1
-HOLE_CENTERS: list[Point] = [
-    Point(0.5, 0.5),
-    Point(0.3, 0.25),
-    Point(0.8, 0.8),
-    Point(0.2, 0.85)
-]
-NUMBER_OF_VERTICES: int = 50
-
-####################################
-
-def compute_polygons() -> list[list[Point]]:
-    polygons: list[list[Point]] = []
-
-    for hole_center in HOLE_CENTERS:
-        polygon: list[Point] = [Point(hole_center.x + HOLE_RADIUS, hole_center.y)]
-
-        for vertex_index in range(1, NUMBER_OF_VERTICES):
-            angle = vertex_index * 2 * math.pi / NUMBER_OF_VERTICES
-            new_vertex = Point(hole_center.x + HOLE_RADIUS * math.cos(angle), hole_center.y + HOLE_RADIUS * math.sin(angle))
-            polygon.append(new_vertex)
-
-        polygons.append(polygon)
-
-    return polygons
-
-
 def segments_intersect(a: Point, b: Point, c: Point, d: Point, ignore_endpoint_proximity=False) -> bool:
     # https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
     denominator = (a.x - b.x) * (c.y - d.y) - (a.y - b.y) * (c.x - d.x)
@@ -162,7 +115,24 @@ def segment_intersects_any(points: list[Point], connections: dict[int, set[int]]
                 return True
     return False
 
-####################################
+
+def generate_mesh(polygon_centers: list[Point], polygon_radius: float, number_of_vertices: int) -> Graph:
+    graph = Graph()
+    polygons: list[list[int]] = []  # A helper list for Stage 4
+
+    # Stage 1: Save a rectangle as polygon data
+    save_polygon_elements(graph, polygons, [
+        Point(0, 0),
+        Point(0, 1),
+        Point(1, 1),
+        Point(1, 0)
+    ])
+
+    # Stage 2: Save polygon data
+    for polygon in compute_polygons():
+        save_polygon_elements(graph, polygons, polygon)
+
+    # Stage 3: Compute primary segments
 
 if __name__ == '__main__':
     print("RUN MESH_GENERATOR.PY, YOU DUMBASS!!! FFS...")
