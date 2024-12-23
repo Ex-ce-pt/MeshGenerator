@@ -1,5 +1,4 @@
 """Defines stages for the current configuration."""
-import turtle
 
 import full.gen as gen
 import ui
@@ -22,16 +21,16 @@ graph: gen.Graph | None = None
 def time_compute_mesh():
     global graph
 
-    start_time = time.time_ns()
+    start_time = time.time()
 
     graph = gen.generate_mesh(POLYGON_CENTERS, POLYGON_RADIUS, NUMBER_OF_VERTICES)
 
-    print("Calculated the mesh, elapsed", (time.time_ns() - start_time), " ns")
+    print("Calculated the mesh, elapsed", (time.time() - start_time), "s")
 
 def draw_mesh():
     time_compute_mesh()
 
-    ui.turt.speed(8)
+    ui.turt.speed(10)
     ui.turt.width(2)
 
     for a_idx in range(len(graph.points)):

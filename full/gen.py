@@ -24,7 +24,7 @@ class Graph:
 PROXIMITY_RADIUS: float = 1e-09
 
 # Saves the polygon data
-def save_polygon_elements(graph: Graph, polygons_list: list[list[int]], polygon: list[Point]) -> None:
+def save_polygon_elements(graph: Graph, polygons_list: list[list[int]], polygon: list[Point]):
     num_vertices = len(polygon)
     first_vertex_id = len(graph.points)
 
@@ -48,9 +48,7 @@ def save_polygon_elements(graph: Graph, polygons_list: list[list[int]], polygon:
         graph.connections[begin_vertex_id].add(end_vertex_id)
         graph.connections[end_vertex_id].add(begin_vertex_id)
 
-def compute_polygons(polygon_centers: list[Point], polygon_radius: float, number_of_vertices: int) -> list[list[Point]]:
-    polygons: list[list[Point]] = []
-
+def compute_polygons(polygon_centers: list[Point], polygon_radius: float, number_of_vertices: int):
     for center in polygon_centers:
         polygon: list[Point] = []
 
@@ -59,9 +57,7 @@ def compute_polygons(polygon_centers: list[Point], polygon_radius: float, number
             new_vertex = Point(center.x + polygon_radius * math.cos(angle), center.y + polygon_radius * math.sin(angle))
             polygon.append(new_vertex)
 
-        polygons.append(polygon)
-
-    return polygons
+        yield polygon
 
 def segments_intersect(a: Point, b: Point, c: Point, d: Point, ignore_endpoint_proximity=False) -> bool:
     # https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
