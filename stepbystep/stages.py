@@ -1,10 +1,7 @@
 """Defines stages for the current configuration."""
 
-from stepbystep import actual_generator as gen
+import gen
 import ui
-
-def coords(x: float, y: float) -> tuple[float, float]:
-    return (x - 0.5) * ui.CANVAS_WIDTH, (y - 0.5) * ui.CANVAS_HEIGHT
 
 # Graph
 points: list[gen.Point] = []
@@ -16,7 +13,7 @@ polygons: list[list[int]] = [] # A helper list for Stage 4
 def input_polygon(polygon: list[gen.Point]):
     # Set up graphics - move to the first vertex
     ui.turt.penup()
-    ui.turt.setpos(coords(polygon[0].x, polygon[0].y))
+    ui.turt.setpos(ui.coords(polygon[0].x, polygon[0].y))
     ui.turt.pendown()
 
     num_vertices = len(polygon)
@@ -43,7 +40,7 @@ def input_polygon(polygon: list[gen.Point]):
         connections[end_vertex_id].add(begin_vertex_id)
 
         # Draw graphics
-        ui.turt.setpos(coords(polygon[end_vertex_index].x, polygon[end_vertex_index].y))
+        ui.turt.setpos(ui.coords(polygon[end_vertex_index].x, polygon[end_vertex_index].y))
 
     ui.turt.penup()
 
@@ -81,9 +78,9 @@ def draw_primary_segments():
             connections[rectangle_vertex_idx].add(point_idx)
             connections[point_idx].add(rectangle_vertex_idx)
             ui.turt.penup()
-            ui.turt.setpos(coords(points[rectangle_vertex_idx].x, points[rectangle_vertex_idx].y))
+            ui.turt.setpos(ui.coords(points[rectangle_vertex_idx].x, points[rectangle_vertex_idx].y))
             ui.turt.pendown()
-            ui.turt.setpos(coords(points[point_idx].x, points[point_idx].y))
+            ui.turt.setpos(ui.coords(points[point_idx].x, points[point_idx].y))
 
 # Stage 4
 def draw_secondary_segments():
@@ -117,9 +114,9 @@ def draw_secondary_segments():
                     connections[b_idx].add(c_idx)
                     connections[c_idx].add(b_idx)
                     ui.turt.penup()
-                    ui.turt.setpos(coords(points[b_idx].x, points[b_idx].y))
+                    ui.turt.setpos(ui.coords(points[b_idx].x, points[b_idx].y))
                     ui.turt.pendown()
-                    ui.turt.setpos(coords(points[c_idx].x, points[c_idx].y))
+                    ui.turt.setpos(ui.coords(points[c_idx].x, points[c_idx].y))
                     return False
         return True
 

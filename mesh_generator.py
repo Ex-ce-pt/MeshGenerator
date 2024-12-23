@@ -2,6 +2,8 @@
 
 import stepbystep
 from stepbystep import stages
+import full
+from full import stages
 import ui
 
 # 0 - Step-by-step
@@ -14,7 +16,7 @@ def main():
             ui.init_graphics(stepbystep.stages.STAGES)
 
         case 1:
-            pass
+            ui.init_graphics(full.stages.STAGES)
 
         case _:
             print("Unsupported configuration:", config)

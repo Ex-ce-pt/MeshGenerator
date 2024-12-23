@@ -14,6 +14,9 @@ stage_in_progress: bool = False
 stage_text_variable: tk.StringVar | None = None
 stages = []
 
+def coords(x: float, y: float) -> tuple[float, float]:
+    return (x - 0.5) * CANVAS_WIDTH, (y - 0.5) * CANVAS_HEIGHT
+
 def get_label_name():
     return f'Stage {stage}: {stages[stage][0]}'
 
@@ -32,14 +35,14 @@ def advance_stage():
         stages[stage][1]()
         stage_in_progress = False
 
-def init_graphics(s):
+def init_graphics(stages_list: list[tuple[str, any]]):
     global window
     global turt
     global label
     global stage_text_variable
     global stages
 
-    stages = s
+    stages = stage_list
 
     window = tk.Tk("Mesh Generator")
 
