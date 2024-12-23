@@ -13,7 +13,7 @@ POLYGON_CENTERS: list[gen.Point] = [
     gen.Point(0.8, 0.8),
     gen.Point(0.2, 0.85)
 ]
-NUMBER_OF_VERTICES: int = 50
+NUMBER_OF_VERTICES: int = 10
 ####################################
 
 graph = None

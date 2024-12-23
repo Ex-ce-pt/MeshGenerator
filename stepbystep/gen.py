@@ -24,7 +24,7 @@ HOLE_CENTERS: list[Point] = [
     Point(0.8, 0.8),
     Point(0.2, 0.85)
 ]
-NUMBER_OF_VERTICES: int = 50
+NUMBER_OF_VERTICES: int = 10
 
 ####################################
 
