@@ -1,3 +1,5 @@
+"""File responsible for handling the UI."""
+
 import turtle
 import tkinter as tk
 

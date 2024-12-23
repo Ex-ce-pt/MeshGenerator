@@ -1,3 +1,5 @@
+"""Main file."""
+
 import actual_generator as gen
 import ui
 

@@ -1,3 +1,5 @@
+"""File with functions responsible for heavy-lifting."""
+
 import math
 
 class Point:
