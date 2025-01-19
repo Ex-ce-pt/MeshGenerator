@@ -24,7 +24,7 @@ class Graph:
 PROXIMITY_RADIUS: float = 1e-09
 
 # Saves the polygon data
-def save_polygon_elements(graph: Graph, polygons_list: list[list[int]], polygon: list[Point]):
+def save_polygon_elements(graph: Graph, polygons_list: list[tuple[int, int]], polygon: list[Point]):
     num_vertices = len(polygon)
     first_vertex_id = len(graph.points)
 
@@ -32,7 +32,7 @@ def save_polygon_elements(graph: Graph, polygons_list: list[list[int]], polygon:
     graph.points.extend(polygon)
 
     # Save polygon points indices for Stage 4
-    polygons_list.append([first_vertex_id + v for v in range(num_vertices)])
+    polygons_list.append((first_vertex_id, first_vertex_id + num_vertices - 1))
 
     for begin_vertex_index in range(num_vertices):
         # Get IDs (indices in the points list)
@@ -95,9 +95,9 @@ def segments_intersect(a: Point, b: Point, c: Point, d: Point, ignore_endpoint_p
 
     return False
 
-def segment_intersects_any(points: list[Point], connections: dict[int, set[int]], a_idx: int, b_idx: int) -> bool:
-    for c_idx in range(len(points)):
-        for d_idx in connections[c_idx]:
+def segment_intersects_any(graph: Graph, a_idx: int, b_idx: int) -> bool:
+    for c_idx in range(len(graph.points)):
+        for d_idx in graph.connections[c_idx]:
             # If there exists the connection c <-> d, then there also exists d <-> c
             # If d_idx is less than c_idx, such connection has already been handled since the loop got to d_idx first
             if d_idx < c_idx:
@@ -107,13 +107,13 @@ def segment_intersects_any(points: list[Point], connections: dict[int, set[int]]
             if a_idx == c_idx or a_idx == d_idx or b_idx == c_idx or b_idx == d_idx:
                 continue
 
-            if segments_intersect(points[a_idx], points[b_idx], points[c_idx], points[d_idx]):
+            if segments_intersect(graph.points[a_idx], graph.points[b_idx], graph.points[c_idx], graph.points[d_idx]):
                 return True
     return False
 
 def generate_mesh(polygon_centers: list[Point], polygon_radius: float, number_of_vertices: int) -> Graph:
     graph = Graph()
-    polygons: list[list[int]] = []  # A helper list for Stage 4
+    polygons: list[tuple[int, int]] = []  # A helper list for Stage 4
 
     # Stage 1: Save a rectangle as polygon data
     save_polygon_elements(graph, polygons, [
@@ -130,42 +130,35 @@ def generate_mesh(polygon_centers: list[Point], polygon_radius: float, number_of
     # Stage 3: Compute primary segments
     for rectangle_vertex_idx in range(4):
         for point_idx in range(4, len(graph.points)):
-            if segment_intersects_any(graph.points, graph.connections, rectangle_vertex_idx, point_idx):
+            if segment_intersects_any(graph, rectangle_vertex_idx, point_idx):
                 continue
 
             graph.connections[rectangle_vertex_idx].add(point_idx)
             graph.connections[point_idx].add(rectangle_vertex_idx)
 
     # Stage 4: Compute secondary segments
-    def complete_triangle() -> bool:
-        connections_of_polygon_vertices = [
-            (0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (0, 3), (3, 0),
-            *((poly[v1_idx], poly[v2_idx]) for poly in polygons for v1_idx in range(len(poly)) for v2_idx in
-              range(len(poly)) if
-              v1_idx != v2_idx and (v1_idx + 1) % len(poly) != v2_idx and v1_idx != (v2_idx + 1) % len(poly))
-        ]
-        # FrEaKy generator expression instead lol
-        # for poly in polygons:
-        #     for v1_idx in range(len(poly)):
-        #         for v2_idx in range(len(poly)):
-        #             if v1_idx != v2_idx and (v1_idx + 1) % len(poly) != v2_idx and v1_idx != (v2_idx + 1) % len(poly):
-        #                 connections_of_polygon_vertices.append((poly[v1_idx], poly[v2_idx]))
-        for a_idx in range(len(graph.points)):
+    def complete_triangle(starting_idx) -> (bool, int):
+        for a_idx in range(starting_idx, len(graph.points)):
             for b_idx in graph.connections[a_idx]:
                 # Look for a 3rd point to complete the triangle
                 potential_c_idxs = graph.connections[a_idx].difference(graph.connections[b_idx]).difference({b_idx})
                 for c_idx in potential_c_idxs:
-                    if (b_idx, c_idx) in connections_of_polygon_vertices:
+                    # Prevents connections inside the polygons from forming
+                    if any(poly_begin <= b_idx <= poly_end and poly_begin <= c_idx <= poly_end for poly_begin, poly_end in polygons):
                         continue
-                    if segment_intersects_any(graph.points, graph.connections, a_idx, c_idx) or segment_intersects_any(
-                            graph.points, graph.connections, b_idx, c_idx):
+                    if segment_intersects_any(graph, a_idx, c_idx) or segment_intersects_any(graph, b_idx, c_idx):
                         continue
                     graph.connections[b_idx].add(c_idx)
                     graph.connections[c_idx].add(b_idx)
-                    return False
-        return True
-    while not complete_triangle():
-        pass
+                    return False, a_idx
+        return True, 0
+
+    starting_idx = 0
+    while True:
+        done, new_idx = complete_triangle(starting_idx)
+        if done:
+            break
+        starting_idx = new_idx
 
     return graph
 
